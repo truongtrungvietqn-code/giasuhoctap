@@ -1,5 +1,5 @@
 {
-  "name": "Trợ Lý Giáo Viên - Tạo Kế Hoạch bài dạy  4.0 - Tích Hợp NLS",
-  "description": "Ứng dụng AI hỗ trợ giáo viên xây dựng Kế hoạch bài dạy (Phụ lục 4) và tích hợp Năng lực số (TT 02/2025) chuẩn theo Công văn 5512.",
+  "name": "Gia sư Học tập 4.0 - Giáo viên: Trương Trung Việt",
+  "description": "Một trợ lý học tập thông minh được hỗ trợ bởi AI. Đặt bất kỳ câu hỏi nào, nhận giải thích rõ ràng và nắm vững các chủ đề mới với gia sư kỹ thuật số cá nhân của bạn.",
   "requestFramePermissions": []
 }
