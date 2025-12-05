@@ -1,27 +1,28 @@
 {
-  "name": "gia-sư-học-tập-4.0---giáo-viên:-trương-trung-việt",
+  "name": "trợ-lý-giáo-viên-4.0---tích-hợp-nls",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "ng serve",
-    "build": "ng build",
-    "preview": "ng serve --configuration=production"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "rxjs": "^7.8.2",
-    "@google/genai": "^1.31.0",
-    "@angular/compiler": "^21.0.0",
-    "@angular/core": "^21.0.0",
-    "@angular/common": "^21.0.0",
-    "@angular/platform-browser": "^21.0.0",
-    "@angular/build": "^21.0.0",
-    "@angular/cli": "^21.0.0",
-    "@angular/compiler-cli": "^21.0.0",
-    "tailwindcss": "latest"
+    "@google/genai": "^1.30.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "lucide-react": "^0.555.0",
+    "react-markdown": "^10.1.0",
+    "mammoth": "^1.8.0",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "remark-gfm": "^4.0.0",
+    "rehype-raw": "^7.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }

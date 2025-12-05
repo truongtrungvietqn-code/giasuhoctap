@@ -1,4 +1,3 @@
-
 import {
   Component,
   ChangeDetectionStrategy,
@@ -17,6 +16,7 @@ import { Chat } from '@google/genai';
 
 @Component({
   selector: 'app-root',
+  imports: [CommonModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,9 +30,11 @@ export class AppComponent implements OnInit, AfterViewChecked {
   currentMessage = signal<string>('');
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
+  speakingMessageIndex = signal<number | null>(null);
   
   private chatSession: Chat | null = null;
   private shouldScrollDown = false;
+  private voices: SpeechSynthesisVoice[] = [];
 
   suggestedTopics: string[] = [
     'Giải thích về Lượng tử bất định',
@@ -53,6 +55,11 @@ export class AppComponent implements OnInit, AfterViewChecked {
     } else {
       this.error.set('Không thể khởi tạo dịch vụ AI. Vui lòng kiểm tra API key và thử lại.');
     }
+    
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+        this.loadVoices();
+        window.speechSynthesis.onvoiceschanged = () => this.loadVoices();
+    }
   }
 
   ngAfterViewChecked(): void {
@@ -66,6 +73,12 @@ export class AppComponent implements OnInit, AfterViewChecked {
     const messageToSend = prompt || this.currentMessage().trim();
     if (!messageToSend || this.isLoading() || !this.chatSession) {
       return;
+    }
+
+    // Stop any speech before sending a new message
+    if (typeof window !== 'undefined' && window.speechSynthesis?.speaking) {
+      window.speechSynthesis.cancel();
+      this.speakingMessageIndex.set(null);
     }
 
     this.isLoading.set(true);
@@ -108,6 +121,71 @@ export class AppComponent implements OnInit, AfterViewChecked {
     this.currentMessage.set(textarea.value);
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+
+  toggleReadAloud(textToRead: string, index: number): void {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      console.error('Text-to-speech is not supported in this browser.');
+      this.error.set('Trình duyệt của bạn không hỗ trợ đọc văn bản.');
+      return;
+    }
+    const synth = window.speechSynthesis;
+
+    if (this.speakingMessageIndex() === index) {
+      synth.cancel();
+      this.speakingMessageIndex.set(null);
+      return;
+    }
+
+    if (synth.speaking) {
+      synth.cancel();
+    }
+    
+    const cleanedText = this.cleanMarkdownForSpeech(textToRead);
+    const utterance = new SpeechSynthesisUtterance(cleanedText);
+    
+    const vietnameseVoice = this.voices.find(voice => voice.lang === 'vi-VN');
+    if (vietnameseVoice) {
+      utterance.voice = vietnameseVoice;
+    } else {
+      utterance.lang = 'vi-VN';
+    }
+    
+    utterance.onend = () => {
+      if (this.speakingMessageIndex() === index) {
+        this.speakingMessageIndex.set(null);
+      }
+    };
+
+    utterance.onerror = (event) => {
+      console.error('SpeechSynthesis Error', event);
+      this.error.set('Đã có lỗi xảy ra khi đọc văn bản.');
+      if (this.speakingMessageIndex() === index) {
+        this.speakingMessageIndex.set(null);
+      }
+    };
+    
+    this.speakingMessageIndex.set(index);
+    synth.speak(utterance);
+  }
+  
+  private loadVoices(): void {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      this.voices = window.speechSynthesis.getVoices();
+    }
+  }
+
+  private cleanMarkdownForSpeech(text: string): string {
+    let cleanedText = text;
+    cleanedText = cleanedText.replace(/!\[.*?\]\(.*?\)/g, '');
+    cleanedText = cleanedText.replace(/\[(.*?)\]\(.*?\)/g, '$1');
+    cleanedText = cleanedText.replace(/(\*\*|__)(.*?)\1/g, '$2');
+    cleanedText = cleanedText.replace(/(\*|_)(.*?)\1/g, '$2');
+    cleanedText = cleanedText.replace(/~~(.*?)~~/g, '$1');
+    cleanedText = cleanedText.replace(/`{1,3}(.*?)`{1,3}/g, '$1');
+    cleanedText = cleanedText.replace(/^(#+\s*|>\s*|-\s*|\*\s*|\d+\.\s*)/gm, '');
+    cleanedText = cleanedText.replace(/\n+/g, ' ').trim();
+    return cleanedText;
   }
   
   private scrollToBottom(): void {

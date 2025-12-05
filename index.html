@@ -1,36 +1,231 @@
-
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Gia sư Học tập 4.0</title>
-  <base href="/" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* For custom scrollbars */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-    .dark ::-webkit-scrollbar-track {
-      background: #1e293b;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #94a3b8;
-      border-radius: 10px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #64748b;
-    }
-  </style>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trợ Lý Giáo Viên 4.0 - Tích Hợp NLS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              primary: '#2563eb', // blue-600
+              secondary: '#475569', // slate-600
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-out forwards',
+              'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Custom scrollbar for better UX */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      
+      .custom-scrollbar {
+        scrollbar-gutter: stable;
+      }
 
+      /* --- BEAUTIFUL TABLE STYLES --- */
+      .markdown-body {
+        font-size: 16px;
+        line-height: 1.7;
+        color: #334155;
+      }
+      
+      /* Make tables look professional */
+      .markdown-body table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        margin: 2em 0;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+        min-width: 600px;
+      }
+
+      .markdown-body thead {
+        background: linear-gradient(to right, #f8fafc, #f1f5f9);
+        color: #1e293b;
+      }
+
+      .markdown-body th {
+        padding: 16px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.9em;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 2px solid #e2e8f0;
+        border-right: 1px solid #f1f5f9;
+        color: #3b82f6; /* Blue heading text */
+      }
+      .markdown-body th:last-child {
+        border-right: none;
+      }
+
+      .markdown-body tbody tr {
+        background-color: #ffffff;
+        transition: background-color 0.15s ease;
+      }
+      
+      .markdown-body tbody tr:nth-child(even) {
+        background-color: #f8fafc;
+      }
+      
+      .markdown-body tbody tr:hover {
+        background-color: #eff6ff;
+      }
+
+      .markdown-body td {
+        padding: 18px;
+        vertical-align: top;
+        border-bottom: 1px solid #f1f5f9;
+        border-right: 1px solid #f1f5f9;
+        color: #334155;
+      }
+      .markdown-body td:last-child {
+        border-right: none;
+      }
+      .markdown-body tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Specific Styles for Education Content */
+      .markdown-body h1 {
+        font-size: 2.2em;
+        color: #1e293b;
+        margin-top: 1.2em;
+        margin-bottom: 1em;
+        font-weight: 800;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
+      }
+      .markdown-body h2 {
+        font-size: 1.5em;
+        color: #0f172a; 
+        margin-top: 2.2em;
+        margin-bottom: 1em;
+        font-weight: 700;
+        border-left: 5px solid #3b82f6;
+        padding-left: 12px;
+        line-height: 1.3;
+      }
+      .markdown-body h3 {
+        font-size: 1.25em;
+        margin-top: 1.8em;
+        margin-bottom: 0.8em;
+        font-weight: 600;
+        color: #475569;
+      }
+      
+      /* Make Lists Look Cleaner */
+      .markdown-body ul, .markdown-body ol {
+        margin-left: 1.5em;
+        margin-bottom: 1.5em;
+      }
+      .markdown-body li {
+        margin-bottom: 0.5em;
+        position: relative;
+      }
+      
+      /* Highlight NLS Tags */
+      .markdown-body strong {
+        color: #0f172a;
+        font-weight: 700;
+      }
+      
+      /* Blockquote for notes */
+      .markdown-body blockquote {
+        border-left: 4px solid #fbbf24;
+        background-color: #fffbeb;
+        padding: 1rem 1.5rem;
+        margin: 1.5rem 0;
+        font-style: italic;
+        color: #92400e;
+        border-radius: 0 8px 8px 0;
+      }
+
+      .markdown-body code {
+        background-color: #f1f5f9;
+        padding: 0.2em 0.4em;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-family: monospace;
+        color: #ef4444;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0",
+    "mammoth": "https://aistudiocdn.com/mammoth@^1.8.0/mammoth.browser.min.js",
+    "rehype-katex": "https://aistudiocdn.com/rehype-katex@^7.0.1",
+    "remark-math": "https://aistudiocdn.com/remark-math@^6.0.0",
+    "remark-gfm": "https://aistudiocdn.com/remark-gfm@^4.0.0",
+    "rehype-raw": "https://aistudiocdn.com/rehype-raw@^7.0.0",
+    "rxjs": "https://aistudiocdn.com/rxjs@^7.8.2?conditions=es2015",
+    "rxjs/operators": "https://aistudiocdn.com/rxjs@^7.8.2/operators?conditions=es2015",
+    "rxjs/ajax": "https://aistudiocdn.com/rxjs@^7.8.2/ajax?conditions=es2015",
+    "rxjs/webSocket": "https://aistudiocdn.com/rxjs@^7.8.2/webSocket?conditions=es2015",
+    "rxjs/testing": "https://aistudiocdn.com/rxjs@^7.8.2/testing?conditions=es2015",
+    "rxjs/fetch": "https://aistudiocdn.com/rxjs@^7.8.2/fetch?conditions=es2015",
+    "@angular/core": "https://next.esm.sh/@angular/core@^21.0.3?external=rxjs",
+    "@angular/common": "https://next.esm.sh/@angular/common@^21.0.3?external=rxjs",
+    "path": "https://next.esm.sh/path@^0.12.7?external=rxjs",
+    "vite": "https://next.esm.sh/vite@^7.2.6?external=rxjs",
+    "react-dom/client": "https://next.esm.sh/react-dom@^19.2.1/client?external=rxjs",
+    "@vitejs/plugin-react": "https://next.esm.sh/@vitejs/plugin-react@^5.1.1?external=rxjs",
+    "react/jsx-runtime": "https://next.esm.sh/react@^19.2.1/jsx-runtime?external=rxjs"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900">
-  <app-root></app-root>
-  <p>Trương Trung Việt - Trường THCS Nghĩa Hoà</p>
+  <body class="bg-slate-50 text-slate-900 antialiased">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>

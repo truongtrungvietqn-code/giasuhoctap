@@ -10,7 +10,7 @@ export class GeminiService {
 
   constructor() {
     try {
-      this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     } catch (error) {
       console.error("Failed to initialize GoogleGenAI:", error);
     }
